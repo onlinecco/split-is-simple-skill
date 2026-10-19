@@ -80,7 +80,7 @@ Omitted event fields and omitted records are preserved. `participants` and `expe
 
 Use `removeExpenseIds` / `removeParticipantIds` arrays only for explicit user-requested deletion. Removing a participant fails if a remaining expense references them. Correct or remove those expenses in the same patch, or beforehand. Never remove and upsert the same ID in one request. On older books containing several events, only the active event is changed; other events are preserved.
 
-Returns 200 with the complete latest event, URL and incremented revision. Missing If-Match returns 428; stale revisions return 412 without any changes. On a 412, read again. Automatically reconcile independent additions and already-applied identical changes; ask before resolving competing edits to the same record. Do not blindly repeat a stale patch with a new revision. Updates never create missing/deleted events.
+Returns 200 with the complete latest event, URL and incremented JSON revision. Successful mutation responses intentionally omit ETag to prevent hosting proxies from re-evaluating the old If-Match against the newly saved revision. Missing If-Match returns 428; stale revisions return 412 without any changes. On a 412, read again. Automatically reconcile independent additions and already-applied identical changes; ask before resolving competing edits to the same record. Do not blindly repeat a stale patch with a new revision. Updates never create missing/deleted events.
 
 ## Limits and errors
 
