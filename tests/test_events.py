@@ -41,7 +41,7 @@ class ClientTests(unittest.TestCase):
                 self.assertEqual(client.main(['update','--event',SECRET,'--file',str(p)]),1)
             with patch.object(client,'request',return_value=(412,{'error':'Event changed'},{})) as request, redirect_stderr(io.StringIO()):
                 self.assertEqual(client.main(['update','--event',SECRET,'--revision','2','--file',str(p)]),1)
-                self.assertEqual(request.call_count,1);self.assertEqual(request.call_args.args[0],'PATCH');self.assertEqual(request.call_args.args[2]['If-Match'],'"2"')
+                self.assertEqual(request.call_count,1);self.assertEqual(request.call_args.args[0],'PATCH');self.assertEqual(request.call_args.args[2]['X-Event-Revision'],'2')
 
     def test_client_does_not_follow_redirects_or_invent_links(self):
         self.assertIsNone(client.NoRedirect().redirect_request(None,None,302,'',{},'https://evil.example'))

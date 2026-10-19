@@ -60,13 +60,13 @@ The response `event` contains the actual participants and expenses (arrays abbre
 
 ## Read before an update
 
-`GET /api/v1/events/{id}` returns the same response shape and an ETag. Use its JSON `revision` to construct a strong `If-Match` value, such as `"1"`; do not forward a weak hosting ETag. Read immediately before planning an update. Preserve IDs; do not match by name alone. The ID is the `event` query value from the user-supplied link, not `event.id` in the JSON response.
+`GET /api/v1/events/{id}` returns the same response shape and an ETag. Use its JSON `revision` for `X-Event-Revision: 1`; do not forward the ETag as If-Match. Native HTTP conditional headers can be interpreted by the hosting edge after a write commits. Read immediately before planning an update. Preserve IDs; do not match by name alone. The ID is the `event` query value from the user-supplied link, not `event.id` in the JSON response.
 
 ## Update
 
 `PATCH /api/v1/events/{id}`
 
-Headers: `Content-Type: application/json`, `If-Match: "<revision from last read>"`.
+Headers: `Content-Type: application/json`, `X-Event-Revision: <integer revision from last read>`.
 
 ```json
 {
@@ -80,7 +80,7 @@ Omitted event fields and omitted records are preserved. `participants` and `expe
 
 Use `removeExpenseIds` / `removeParticipantIds` arrays only for explicit user-requested deletion. Removing a participant fails if a remaining expense references them. Correct or remove those expenses in the same patch, or beforehand. Never remove and upsert the same ID in one request. On older books containing several events, only the active event is changed; other events are preserved.
 
-Returns 200 with the complete latest event, URL and incremented JSON revision. Successful mutation responses intentionally omit ETag to prevent hosting proxies from re-evaluating the old If-Match against the newly saved revision. Missing If-Match returns 428; stale revisions return 412 without any changes. On a 412, read again. Automatically reconcile independent additions and already-applied identical changes; ask before resolving competing edits to the same record. Do not blindly repeat a stale patch with a new revision. Updates never create missing/deleted events.
+Returns 200 with the complete latest event, URL and incremented JSON revision. Successful mutation responses omit ETag. The application-specific revision header avoids native HTTP precondition processing by the hosting proxy while retaining the database revision check. If-Match is rejected on this public endpoint. Missing X-Event-Revision returns 428; stale revisions return 412 without any changes. On a 412, read again. Automatically reconcile independent additions and already-applied identical changes; ask before resolving competing edits to the same record. Do not blindly repeat a stale patch with a new revision. Updates never create missing/deleted events.
 
 ## Limits and errors
 

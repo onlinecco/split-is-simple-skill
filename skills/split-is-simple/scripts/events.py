@@ -85,7 +85,7 @@ def main(argv=None):
             if method == "PATCH":
                 if args.revision is None or not 1 <= args.revision <= 2147483647:
                     raise ValueError("Provide --revision from the latest event read.")
-                headers["If-Match"] = f'"{args.revision}"'
+                headers["X-Event-Revision"] = str(args.revision)
         status, result, response_headers = request(method, origin + endpoint, headers, payload)
         if status >= 400:
             print(json.dumps({"status": status, "error": result.get("error", "Request failed"),
