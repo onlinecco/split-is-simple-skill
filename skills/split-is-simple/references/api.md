@@ -56,11 +56,11 @@ Returns 201, including on identical retries:
 }
 ```
 
-The response `event` contains the actual participants and expenses (arrays abbreviated above). Participant group values are household keys or null. Response headers include `ETag: "1"`, `Location`, and `Cache-Control: private, no-store`.
+The response `event` contains the actual participants and expenses (arrays abbreviated above). Participant group values are household keys or null. Response headers include an ETag, `Location`, and `Cache-Control: private, no-store`. Hosting compression may weaken the response ETag (for example `W/"1"`); build update preconditions from the JSON `revision` rather than copying that header.
 
 ## Read before an update
 
-`GET /api/v1/events/{id}` returns the same response shape and an ETag. Read immediately before planning an update. Preserve IDs; do not match by name alone. The ID is the `event` query value from the user-supplied link, not `event.id` in the JSON response.
+`GET /api/v1/events/{id}` returns the same response shape and an ETag. Use its JSON `revision` to construct a strong `If-Match` value, such as `"1"`; do not forward a weak hosting ETag. Read immediately before planning an update. Preserve IDs; do not match by name alone. The ID is the `event` query value from the user-supplied link, not `event.id` in the JSON response.
 
 ## Update
 
