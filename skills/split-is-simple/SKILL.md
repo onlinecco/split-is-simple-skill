@@ -1,6 +1,6 @@
 ---
 name: split-is-simple
-description: Create or update shared-expense events in Split Is Simple from conversation, expense notes, or receipt images, and return an editable event link. Use when users want to track or split real group expenses, including household grouping.
+description: Create or update shared-expense events in Split Is Simple from conversation, expense notes, or receipt images, and return an editable event link. Use when users want to track or split real expenses, including household grouping.
 ---
 
 # Split Is Simple
